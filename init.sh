@@ -37,6 +37,8 @@ function stop() {
 
 function start() {
     java -cp ${BASEDIR}/lib/ace.jar ${JVM_OPTS} ${UNIFI_OPTS} ${MAINCLASS} start &
+    sleep 2
+    tail -f /usr/lib/unifi/logs/server.log
 }
 
 # signals to trap for graceful shutdown
