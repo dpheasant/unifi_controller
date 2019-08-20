@@ -24,7 +24,26 @@ UNIFI_OPTS="${UNIFI_OPTS} -Dunifi.datadir=${DATADIR}"
 UNIFI_OPTS="${UNIFI_OPTS} -Dunifi.logdir=${LOGDIR}"
 UNIFI_OPTS="${UNIFI_OPTS} -Dunifi.rundir=${RUNDIR}"
 
+## gracefully stops the application
+function stop() {
+    signal=$1
+    echo ""
+    echo "!!!! Caught $signal !!!!"
+    echo "Stopping application...."
+    java -cp ${BASEDIR}/lib/ace.jar ${JVM_OPTS} ${UNIFI_OPTS} ${MAINCLASS} stop
+
+    echo "Application stopped (function)."
+}
+
+function start() {
+    java -cp ${BASEDIR}/lib/ace.jar ${JVM_OPTS} ${UNIFI_OPTS} ${MAINCLASS} start &
+}
+
+# signals to trap for graceful shutdown
+trap "stop SIGTERM" INT TERM
 
 cd ${BASEDIR}
-java -cp ${BASEDIR}/lib/ace.jar ${JVM_OPTS} ${UNIFI_OPTS} ${MAINCLASS} start
-
+start
+echo "Application started!"
+wait
+echo "Application stopped (main)."
